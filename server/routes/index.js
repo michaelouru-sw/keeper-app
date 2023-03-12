@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const User = require("../models/User");
 const Note = require("../models/Note");
+const cors = require("cors");
 const passport = require("passport");
 
 /*
@@ -8,13 +9,13 @@ const passport = require("passport");
  *        GET Requests
  *   ...................................
  */
-router.get("/", (req, res) => {
+router.get("/", cors(), (req, res) => {
   res.json(null);
 });
 
-router.get("/notes", async (req, res) => {
+router.get("/notes", cors(), async (req, res) => {
   const notes = await Note.find({});
-  res.json({ success: true, message: "Successfully fetched the notes", notes });
+  res.json(notes);
 });
 // router.get("/:user", (req, res, next) => {});
 
@@ -23,7 +24,7 @@ router.get("/notes", async (req, res) => {
  *        POST Requests
  *   ...................................
  */
-router.post("/register", (req, res) => {
+router.post("/register", cors(), (req, res) => {
   User.register(
     { email: req.body.username },
     req.body.password,
@@ -40,7 +41,7 @@ router.post("/register", (req, res) => {
   );
 });
 
-router.post("/login", (req, res, next) => {
+router.post("/login", cors(), (req, res, next) => {
   const user = new User({
     email: req.body.email,
     password: req.body.password,
@@ -57,7 +58,8 @@ router.post("/login", (req, res, next) => {
   });
 });
 
-router.post("/submitnote", (req, res) => {
+router.post("/submitnote", cors(), (req, res) => {
+  console.log(req.body);
   const note = new Note({
     title: req.body.title,
     body: req.body.body,

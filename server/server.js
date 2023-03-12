@@ -10,8 +10,31 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+const cors = require("cors");
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: "10mb" }));
+app.use(
+  bodyParser.urlencoded({
+    limit: "10mb",
+    extended: true,
+    parameterLimit: 50000,
+  })
+);
+
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "X-Requested-With, Content-Type"
+  );
+  res.setHeader("Access-Control-Allow-Credentials", true);
+
+  next();
+});
 
 app.use(
   session({
@@ -56,6 +79,7 @@ passport.deserializeUser((user, cb) => {
   });
 });
 
+app.use(cors());
 app.use(routes);
 
 app.listen(3001, (err) => {
