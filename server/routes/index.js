@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const mongodb = require("mongodb");
 const User = require("../models/User");
 const Note = require("../models/Note");
 const cors = require("cors");
@@ -13,7 +14,7 @@ router.get("/", cors(), (req, res) => {
   res.json(null);
 });
 
-router.get("/notes", cors(), async (req, res) => {
+router.get("/api/notes", cors(), async (req, res) => {
   const notes = await Note.find({});
   res.json(notes);
 });
@@ -93,6 +94,14 @@ router.post("/submitnote", cors(), (req, res) => {
  *        DELETE Requests
  *   ...................................
  */
-// router.delete();
+router.delete("/api/note/:id", (req, res) => {
+  const _id = req.params.id;
+
+  Note.findByIdAndDelete(_id)
+    .then(() => {
+      res.json(`Note ${_id} deleted successfully.`);
+    })
+    .catch((err) => res.status(500).json({ err }));
+});
 
 module.exports = router;
