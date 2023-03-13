@@ -94,14 +94,16 @@ router.post("/submitnote", cors(), (req, res) => {
  *        DELETE Requests
  *   ...................................
  */
-router.delete("/api/note/:id", (req, res) => {
-  const _id = req.params.id;
-
-  Note.findByIdAndDelete(_id)
-    .then(() => {
-      res.json(`Note ${_id} deleted successfully.`);
-    })
-    .catch((err) => res.status(500).json({ err }));
+router.delete("/api/note/", async (req, res) => {
+  const id = req.body.id;
+  try {
+    const result = await Note.findByIdAndDelete(id);
+    if (result) {
+      res.json({ success: true, message: "Successfully deleted note: " + id });
+    }
+  } catch (err) {
+    res.json({ success: true, message: err });
+  }
 });
 
 module.exports = router;
